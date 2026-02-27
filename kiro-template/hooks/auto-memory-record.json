@@ -1,0 +1,11 @@
+{
+  "name": "Auto Memory - 执行完成后记录经验",
+  "description": "Agent 执行完成后，自动检查是否有值得记录的经验，写入本地并同步到团队共享库",
+  "trigger": {
+    "type": "on_agent_execution_complete"
+  },
+  "action": {
+    "type": "send_message",
+    "message": "回顾刚才的工作过程，判断是否有值得记录的经验：\n\n检查以下情况：\n1. 是否修复了 bug 并找到了根因？\n2. 是否经过多次尝试（>=2次失败）才找到正确方案？\n3. 是否发现了项目约定或技术陷阱？\n4. 是否发现了非显而易见的 API 行为或框架用法？\n\n如果有值得记录的经验，执行以下步骤：\n\nA. 写入本项目：\n   - 项目级规则 → .kiro/steering/project-rules.md\n   - 领域经验 → .kiro/steering/domain-{领域名}.md\n   - 格式：## 标题，包含来源、问题、方案字段\n   - 写入前检查是否已有相同标题的条目，有则更新，无则追加\n\nB. 判断是否通用并同步到共享库：\n   - 如果经验涉及项目特有的路径、配置、业务 → 仅本项目\n   - 如果涉及通用技术知识 → 同时写入 D:\\shared-memory-test\\profiles\\{profile-type}\\对应文件\n   - 如果是全局通用 → 写入 D:\\shared-memory-test\\global\\对应文件\n   - 写入后执行：git -C D:\\shared-memory-test add . && git -C D:\\shared-memory-test commit -m \"auto-memory: sync from {项目名}\" && git -C D:\\shared-memory-test push origin main\n   - 如果 push 失败（冲突等），先 pull --rebase 再重试一次，仍失败则跳过\n\nC. 自动提交本项目变更：\n   - git add .kiro/steering/\n   - git commit -m \"auto-memory: update experience notes\"\n   - 如果 commit 失败（无变更），静默跳过\n\n如果没有值得记录的经验，什么都不做，不要输出任何内容。"
+  }
+}

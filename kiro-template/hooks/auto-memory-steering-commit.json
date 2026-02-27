@@ -1,0 +1,12 @@
+{
+  "name": "Auto Memory - Steering 文件变更自动提交",
+  "description": "检测到 steering 文件保存时，自动 git commit 确保经验不丢失",
+  "trigger": {
+    "type": "on_file_save",
+    "filePattern": ".kiro/steering/**/*.md"
+  },
+  "action": {
+    "type": "run_command",
+    "command": "git add .kiro/steering/ && git diff --cached --quiet || git commit -m \"auto-memory: update experience notes\""
+  }
+}

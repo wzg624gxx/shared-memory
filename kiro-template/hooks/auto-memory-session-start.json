@@ -1,0 +1,11 @@
+{
+  "name": "Auto Memory - 会话开始时加载经验",
+  "description": "新会话创建时，自动从团队共享库拉取最新经验并加载所有 steering 文件",
+  "trigger": {
+    "type": "on_session_created"
+  },
+  "action": {
+    "type": "send_message",
+    "message": "请执行以下步骤：\n\n1. 从团队共享经验库拉取最新经验：\n   - 共享库本地路径：D:\\shared-memory-test\n   - 执行 git -C D:\\shared-memory-test pull origin main（如果失败则跳过，不报错）\n\n2. 自动识别项目类型：\n   - 检查项目根目录的特征文件（pom.xml、package.json、build.gradle 等）\n   - 根据依赖判断项目 profile 类型（teamcenter-rac / springboot-api / react-frontend / vue-frontend / gradle-java / generic）\n\n3. 同步共享经验到本项目：\n   - 检查 D:\\shared-memory-test\\global\\ 下是否有经验文件\n   - 检查 D:\\shared-memory-test\\profiles\\{profile-type}\\ 下是否有经验文件\n   - 将新增或更新的经验文件复制到本项目 .kiro/steering/shared/ 目录下\n   - 如果 .kiro/steering/shared/ 不存在则创建\n\n4. 阅读 .kiro/steering/ 目录下的所有 markdown 文件，了解本项目已积累的经验和规则\n\n5. 在后续工作中严格遵循这些经验，避免重复踩坑"
+  }
+}
