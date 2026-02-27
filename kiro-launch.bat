@@ -3,106 +3,155 @@ chcp 65001 >nul
 setlocal enabledelayedexpansion
 
 REM ============================================
-REM  Kiro + Auto Memory 一键启动器
-REM  用法：双击运行，或拖拽项目文件夹到此脚本上
-REM  功能：
-REM    1. 检查并安装 Git
-REM    2. 检查并安装 Kiro
-REM    3. Clone/更新共享经验库
-REM    4. 初始化项目 .kiro 配置
-REM    5. 同步共享经验
-REM    6. 启动 Kiro 打开项目
+REM  Kiro + Auto Memory ?????
+REM  ?????????????????????
+REM  ???
+REM    1. ????? Git
+REM    2. ????????? Kiro
+REM    3. Clone/???????
+REM    4. ????? .kiro ??
+REM    5. ??????
+REM    6. ?? Kiro ????
 REM ============================================
 
 set SHARED_REPO_URL=https://github.com/wzg624gxx/shared-memory.git
 set SHARED_REPO=D:\shared-memory-test
-set KIRO_DOWNLOAD_URL=https://kiro.dev/downloads
+set KIRO_INSTALLER_URL=https://github.com/wzg624gxx/shared-memory/releases/download/Kiro%%E5%%AE%%89%%E8%%A3%%85%%E5%%8C%%85/kiro-ide-0.10.32-stable-win32-x64.exe
+set KIRO_INSTALLER_FILE=%TEMP%\KiroSetup.exe
 set PROJECT_DIR=%~1
 if "%PROJECT_DIR%"=="" set PROJECT_DIR=%CD%
 
 echo ============================================
-echo   Kiro + Auto Memory 一键启动器
+echo   Kiro + Auto Memory ?????
 echo ============================================
 echo.
 
-REM ---- Step 1: 检查 Git ----
-echo [1/6] 检查 Git...
+REM ---- Step 1: ?? Git ----
+echo [1/6] ?? Git...
 where git >nul 2>&1
 if %errorlevel% neq 0 (
-    echo [错误] 未检测到 Git，请先安装 Git：https://git-scm.com/download/win
-    echo 正在打开 Git 下载页面...
+    echo [??] ???? Git????? Git?https://git-scm.com/download/win
+    echo ???? Git ????...
     start "" "https://git-scm.com/download/win"
     echo.
-    echo 安装完 Git 后，请重新运行此脚本。
+    echo ??? Git ???????????
     pause
     exit /b 1
 )
-echo [OK] Git 已安装
+echo [OK] Git ???
 
-REM ---- Step 2: 检查 Kiro ----
-echo [2/6] 检查 Kiro...
+REM ---- Step 2: ?? Kiro ----
+echo [2/6] ?? Kiro...
 set KIRO_FOUND=0
 
-REM 检查 PATH 中是否有 kiro
+REM ?? PATH ???? kiro
 where kiro >nul 2>&1
 if %errorlevel% equ 0 (
     set KIRO_FOUND=1
     set KIRO_CMD=kiro
 )
 
-REM 检查常见安装路径
-if %KIRO_FOUND% equ 0 (
+REM ????????
+if !KIRO_FOUND! equ 0 (
     if exist "%LOCALAPPDATA%\Programs\Kiro\Kiro.exe" (
         set KIRO_FOUND=1
         set KIRO_CMD="%LOCALAPPDATA%\Programs\Kiro\Kiro.exe"
     )
 )
-if %KIRO_FOUND% equ 0 (
+if !KIRO_FOUND! equ 0 (
     if exist "%PROGRAMFILES%\Kiro\Kiro.exe" (
         set KIRO_FOUND=1
         set KIRO_CMD="%PROGRAMFILES%\Kiro\Kiro.exe"
     )
 )
-if %KIRO_FOUND% equ 0 (
+if !KIRO_FOUND! equ 0 (
     if exist "%USERPROFILE%\AppData\Local\Programs\Kiro\Kiro.exe" (
         set KIRO_FOUND=1
         set KIRO_CMD="%USERPROFILE%\AppData\Local\Programs\Kiro\Kiro.exe"
     )
 )
 
-if %KIRO_FOUND% equ 0 (
-    echo [提示] 未检测到 Kiro IDE，正在打开下载页面...
-    start "" "%KIRO_DOWNLOAD_URL%"
+if !KIRO_FOUND! equ 0 (
+    echo [??] ???? Kiro IDE?????????...
+    echo      ????: GitHub Releases
+    echo      ??????????????...
     echo.
-    echo 请下载并安装 Kiro IDE，安装完成后重新运行此脚本。
-    pause
-    exit /b 1
-)
-echo [OK] Kiro 已安装
 
-REM ---- Step 3: Clone 或更新共享经验库 ----
-echo [3/6] 同步共享经验库...
+    REM ?? curl ???Windows 10+ ?? curl?
+    curl -L -o "%KIRO_INSTALLER_FILE%" "%KIRO_INSTALLER_URL%"
+    if !errorlevel! neq 0 (
+        echo [??] ????????????
+        echo ?????????https://kiro.dev/downloads
+        pause
+        exit /b 1
+    )
+    echo [OK] ????
+
+    echo      ?????? Kiro...
+    "%KIRO_INSTALLER_FILE%" /S
+    if !errorlevel! neq 0 (
+        echo [??] ??????????????...
+        "%KIRO_INSTALLER_FILE%"
+    )
+
+    REM ??????
+    echo      ??????...
+    timeout /t 15 /nobreak >nul
+
+    REM ?????
+    del "%KIRO_INSTALLER_FILE%" >nul 2>&1
+
+    REM ???? Kiro
+    set KIRO_FOUND=0
+    if exist "%LOCALAPPDATA%\Programs\Kiro\Kiro.exe" (
+        set KIRO_FOUND=1
+        set KIRO_CMD="%LOCALAPPDATA%\Programs\Kiro\Kiro.exe"
+    )
+    if !KIRO_FOUND! equ 0 (
+        if exist "%USERPROFILE%\AppData\Local\Programs\Kiro\Kiro.exe" (
+            set KIRO_FOUND=1
+            set KIRO_CMD="%USERPROFILE%\AppData\Local\Programs\Kiro\Kiro.exe"
+        )
+    )
+    if !KIRO_FOUND! equ 0 (
+        where kiro >nul 2>&1
+        if !errorlevel! equ 0 (
+            set KIRO_FOUND=1
+            set KIRO_CMD=kiro
+        )
+    )
+
+    if !KIRO_FOUND! equ 0 (
+        echo [??] ???????? Kiro??????????????
+        pause
+        exit /b 1
+    )
+)
+echo [OK] Kiro ???
+
+REM ---- Step 3: Clone ???????? ----
+echo [3/6] ???????...
 if not exist "%SHARED_REPO%\.git" (
-    echo      首次使用，正在 clone 共享经验库...
+    echo      ??????? clone ?????...
     git clone "%SHARED_REPO_URL%" "%SHARED_REPO%" >nul 2>&1
-    if %errorlevel% neq 0 (
-        echo [警告] clone 失败，跳过共享经验同步
+    if !errorlevel! neq 0 (
+        echo [??] clone ???????????
     ) else (
-        echo [OK] 共享经验库已 clone
+        echo [OK] ?????? clone
     )
 ) else (
     git -C "%SHARED_REPO%" pull origin main >nul 2>&1
-    echo [OK] 共享经验库已更新
+    echo [OK] ????????
 )
 
-REM ---- Step 4: 初始化项目 .kiro 配置 ----
-echo [4/6] 初始化项目配置...
-echo      项目路径: %PROJECT_DIR%
+REM ---- Step 4: ????? .kiro ?? ----
+echo [4/6] ???????...
+echo      ????: %PROJECT_DIR%
 
 if not exist "%PROJECT_DIR%\.kiro\hooks" mkdir "%PROJECT_DIR%\.kiro\hooks"
 if not exist "%PROJECT_DIR%\.kiro\steering" mkdir "%PROJECT_DIR%\.kiro\steering"
 
-REM 复制 hooks（不覆盖已有文件）
+REM ?? hooks?????????
 if exist "%SHARED_REPO%\kiro-template\hooks" (
     for %%f in ("%SHARED_REPO%\kiro-template\hooks\*") do (
         if not exist "%PROJECT_DIR%\.kiro\hooks\%%~nxf" (
@@ -112,7 +161,7 @@ if exist "%SHARED_REPO%\kiro-template\hooks" (
     )
 )
 
-REM 复制 steering 规则（不覆盖已有文件）
+REM ?? steering ???????????
 if exist "%SHARED_REPO%\kiro-template\steering" (
     for %%f in ("%SHARED_REPO%\kiro-template\steering\*") do (
         if not exist "%PROJECT_DIR%\.kiro\steering\%%~nxf" (
@@ -121,20 +170,20 @@ if exist "%SHARED_REPO%\kiro-template\steering" (
         )
     )
 )
-echo [OK] 项目配置已就绪
+echo [OK] ???????
 
-REM ---- Step 5: 同步共享经验到项目 ----
-echo [5/6] 同步共享经验到项目...
+REM ---- Step 5: ????????? ----
+echo [5/6] ?????????...
 if not exist "%PROJECT_DIR%\.kiro\steering\shared" mkdir "%PROJECT_DIR%\.kiro\steering\shared"
 
-REM 同步全局经验
+REM ??????
 if exist "%SHARED_REPO%\global" (
     for %%f in ("%SHARED_REPO%\global\*.md") do (
         copy /Y "%%f" "%PROJECT_DIR%\.kiro\steering\shared\" >nul 2>&1
     )
 )
 
-REM 自动检测项目类型并同步对应 profile 的经验
+REM ????????????? profile ???
 set PROFILE=generic
 if exist "%PROJECT_DIR%\pom.xml" (
     findstr /i "teamcenter" "%PROJECT_DIR%\pom.xml" >nul 2>&1
@@ -156,20 +205,20 @@ if exist "%PROJECT_DIR%\package.json" (
 )
 if exist "%PROJECT_DIR%\build.gradle" set PROFILE=gradle-java
 
-echo      项目类型: %PROFILE%
+echo      ????: !PROFILE!
 
-if exist "%SHARED_REPO%\profiles\%PROFILE%" (
-    for %%f in ("%SHARED_REPO%\profiles\%PROFILE%\*.md") do (
+if exist "%SHARED_REPO%\profiles\!PROFILE!" (
+    for %%f in ("%SHARED_REPO%\profiles\!PROFILE!\*.md") do (
         copy /Y "%%f" "%PROJECT_DIR%\.kiro\steering\shared\" >nul 2>&1
     )
 )
-echo [OK] 共享经验已同步
+echo [OK] ???????
 
-REM ---- Step 6: 启动 Kiro ----
-echo [6/6] 启动 Kiro...
+REM ---- Step 6: ?? Kiro ----
+echo [6/6] ?? Kiro...
 echo.
 echo ============================================
-echo   一切就绪！Kiro 正在启动...
+echo   ?????Kiro ????...
 echo ============================================
 
-start "" %KIRO_CMD% "%PROJECT_DIR%"
+start "" !KIRO_CMD! "%PROJECT_DIR%"
