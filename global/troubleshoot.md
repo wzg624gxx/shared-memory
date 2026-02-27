@@ -1,7 +1,3 @@
----
-inclusion: manual
----
-
 # Teamcenter 13 问题诊断
 
 诊断 Teamcenter 13 开发中的问题。

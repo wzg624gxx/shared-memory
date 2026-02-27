@@ -1,7 +1,3 @@
----
-inclusion: manual
----
-
 # Teamcenter 13 代码审查
 
 审查 Teamcenter 13 二次开发代码，检查以下方面：

@@ -1,7 +1,3 @@
----
-inclusion: manual
----
-
 # Teamcenter 13 API 解释
 
 解释 Teamcenter 13 API 的用法、参数和示例。
